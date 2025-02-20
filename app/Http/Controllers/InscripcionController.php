@@ -9,22 +9,25 @@ use Illuminate\Http\Request;
 class InscripcionController extends Controller
 {
     public function crearInscripcion(InscripcionRequest $request)
-    {
-        $validated = $request->validated();
+{
+    $validated = $request->validated();
 
-        $precio = $this->calcularPrecio($validated['tipo_inscripcion'], $validated['es_estudiante']);
+    // Depuración: Verifica si tipo_inscripcion está en $validated
+    dd($validated);
 
-        $inscripcion = new Inscripcion();
-        $inscripcion->usuario_id = $validated['usuario_id'];
-        $inscripcion->evento_id = $validated['evento_id'];
-        $inscripcion->tipo_inscripcion = $validated['tipo_inscripcion'];
-        $inscripcion->es_estudiante = $validated['es_estudiante'];
-        $inscripcion->precio = $precio;
+    $precio = $this->calcularPrecio($validated['tipo_inscripcion'], $validated['es_estudiante']);
 
-        $inscripcion->save();
+    $inscripcion = new Inscripcion();
+    $inscripcion->usuario_id = $validated['usuario_id'];
+    $inscripcion->evento_id = $validated['evento_id'];
+    $inscripcion->tipo_inscripcion = $validated['tipo_inscripcion'];
+    $inscripcion->es_estudiante = $validated['es_estudiante'];
+    $inscripcion->precio = $precio;
 
-        return response()->json($inscripcion, 201);
-    }
+    $inscripcion->save();
+
+    return response()->json($inscripcion, 201);
+}
 
     private function calcularPrecio($tipoInscripcion, $esEstudiante)
     {

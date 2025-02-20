@@ -112,18 +112,52 @@ class EventoController extends Controller
                 return response()->json('Ya estás inscrito en este evento', 409);
             }
 
-            $inscripcion = new Inscripcion();
-            $inscripcion->user_id = Auth::id();
-            $inscripcion->evento_id = $id;
-            $inscripcion->tipo = $request->input('tipo');
-            $inscripcion->save();
+            $tipoInscripcion = $request->input('tipo_inscripcion');
+            if (!$tipoInscripcion) {
+                return response()->json('Tipo de inscripción es requerido', 400);
+            }
 
-            // Enviar notificación por correo
-            Auth::user()->notify(new InscripcionNotification($inscripcion));
+            // Check if the user is a student
+            $user = Auth::user();
+            $price = $request->input('price');
+            if (str_ends_with($user->email, '@ayala.com')) {
+                $price = 0;
+            }
 
-            return response()->json('Inscripción realizada con éxito', 201);
+            // Redirigir a PayPal para el pago
+            return redirect()->route('make.payment', ['id' => $id, 'tipo_inscripcion' => $tipoInscripcion, 'price' => $price]);
         } else {
             return response()->json(['error' => 'Debes estar autenticado para inscribirte'], 403);
         }
+    }
+
+    /**
+     * Ver inscripciones del usuario.
+     */
+    public function verInscripciones()
+    {
+        if (Auth::user()->role === 'admin') {
+            $inscripciones = Inscripcion::with('evento')->get();
+        } else {
+            $inscripciones = Inscripcion::with('evento')
+                ->where('user_id', Auth::id())
+                ->get();
+        }
+
+        return view('inscripciones.index', compact('inscripciones'));
+    }
+
+    /**
+     * Eliminar una inscripción.
+     */
+    public function eliminarInscripcion($id)
+    {
+        $inscripcion = Inscripcion::find($id);
+        if ($inscripcion == null || (Auth::user()->role !== 'admin' && $inscripcion->user_id != Auth::id())) {
+            return response()->json('Inscripción no encontrada o no autorizada', 404);
+        }
+        $inscripcion->delete();
+
+        return response()->json('Inscripción eliminada', 204);
     }
 }

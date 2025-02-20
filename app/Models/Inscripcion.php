@@ -14,6 +14,11 @@ class Inscripcion extends Model
     protected $fillable = [
         'user_id',
         'evento_id',
-        'tipo',
+        'tipo_inscripcion',
     ];
+
+    public function evento()
+    {
+        return $this->belongsTo(Eventos::class, 'evento_id');
+    }
 }

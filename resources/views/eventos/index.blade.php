@@ -11,54 +11,54 @@
 @include('layouts.navigation')
 
 <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-    <div class="container mx-auto py-12 mt-16">
-        <h1 class="text-4xl font-bold mb-8 text-center text-blue-700">Eventos</h1>
+    <div class="container mx-auto py-8 mt-16">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Eventos</h1>
         @if(Auth::check() && Auth::user()->role === 'admin')
-            <form id="evento-form" class="mb-12 p-8 bg-white rounded-lg shadow-lg" action="{{ route('eventos.store') }}" method="POST" onsubmit="event.preventDefault(); crearEvento();">
+            <form id="evento-form" class="mb-8 p-6 bg-white rounded-lg shadow-md" action="{{ route('eventos.store') }}" method="POST" onsubmit="event.preventDefault(); crearEvento();">
                 @csrf
                 <input type="hidden" id="evento-id">
-                <div class="mb-6">
-                    <label for="titulo" class="block text-lg font-medium text-gray-700">Título</label>
-                    <input type="text" id="titulo" name="titulo" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
+                    <input type="text" id="titulo" name="titulo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
-                <div class="mb-6">
-                    <label for="tipo" class="block text-lg font-medium text-gray-700">Tipo</label>
-                    <select id="tipo" name="tipo" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
+                    <select id="tipo" name="tipo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         <option value="Conferencia">Conferencia</option>
                         <option value="Taller">Taller</option>
                     </select>
                 </div>
-                <div class="mb-6">
-                    <label for="fecha" class="block text-lg font-medium text-gray-700">Fecha</label>
-                    <input type="date" id="fecha" name="fecha" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
-                <div class="mb-6">
-                    <label for="hora" class="block text-lg font-medium text-gray-700">Hora</label>
-                    <input type="time" id="hora" name="hora" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="hora" class="block text-sm font-medium text-gray-700">Hora</label>
+                    <input type="time" id="hora" name="hora" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
-                <div class="mb-6">
-                    <label for="cupo_maximo" class="block text-lg font-medium text-gray-700">Cupo Máximo</label>
-                    <input type="number" id="cupo_maximo" name="cupo_maximo" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="cupo_maximo" class="block text-sm font-medium text-gray-700">Cupo Máximo</label>
+                    <input type="number" id="cupo_maximo" name="cupo_maximo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 </div>
-                <div class="mb-6">
-                    <label for="ponente_id" class="block text-lg font-medium text-gray-700">Ponente</label>
-                    <select id="ponente_id" name="ponente_id" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
+                <div class="mb-4">
+                    <label for="ponente_id" class="block text-sm font-medium text-gray-700">Ponente</label>
+                    <select id="ponente_id" name="ponente_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         @foreach($ponentes as $ponente)
                             <option value="{{ $ponente->id }}">{{ $ponente->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar</button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Guardar</button>
             </form>
         @endif
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="eventos-container">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="eventos-container">
             @foreach($eventos as $evento)
-                <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" id="evento-{{ $evento->id }}">
-                    <h2 class="text-2xl font-bold mb-4 text-blue-700">{{ $evento->titulo }}</h2>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" id="evento-{{ $evento->id }}">
+                    <h2 class="text-xl font-bold mb-2 text-blue-600">{{ $evento->titulo }}</h2>
                     <p class="text-gray-700 mb-4">{{ $evento->tipo }}</p>
                     <p class="text-gray-700 mb-4">{{ $evento->fecha }} - {{ $evento->hora }}</p>
                     <p class="text-gray-700 mb-4">Cupo máximo: {{ $evento->cupo_maximo }}</p>
@@ -71,19 +71,20 @@
                         <form action="{{ route('eventos.destroy', $evento->id) }}" method="POST" onsubmit="event.preventDefault(); deleteEvento({{ $evento->id }});">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="mt-6 bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700">Eliminar</button>
+                            <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
                         </form>
                     @else
-                        <form action="{{ route('eventos.inscribirse', $evento->id) }}" method="POST" onsubmit="event.preventDefault(); inscribirseEvento({{ $evento->id }});">
+                        <form action="{{ route('make.payment', ['id' => $evento->id, 'tipo_inscripcion' => 'Presencial', 'price' => '10.00']) }}" method="POST" id="payment-form-{{ $evento->id }}" onsubmit="event.preventDefault(); submitPaymentForm({{ $evento->id }});">
                             @csrf
-                            <div class="mb-6">
-                                <label for="tipo" class="block text-lg font-medium text-gray-700">Tipo de inscripción</label>
-                                <select id="tipo" name="tipo" class="mt-2 block w-full border-gray-300 rounded-md shadow-sm">
-                                    <option value="Presencial">Presencial</option>
-                                    <option value="Virtual">Virtual</option>
+                            <div class="mb-4">
+                                <label for="tipo_inscripcion-{{ $evento->id }}" class="block text-sm font-medium text-gray-700">Tipo de inscripción</label>
+                                <select id="tipo_inscripcion-{{ $evento->id }}" name="tipo_inscripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" onchange="updatePrice({{ $evento->id }})">
+                                    <option value="Presencial" data-price="10.00">Presencial - 10 €</option>
+                                    <option value="Virtual" data-price="5.00">Virtual - 5 €</option>
                                 </select>
                             </div>
-                            <button type="submit" class="mt-6 bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700">Inscribirse</button>
+                            <input type="hidden" id="price-{{ $evento->id }}" name="price" value="10.00">
+                            <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Inscribirse</button>
                         </form>
                     @endif
                 </div>
@@ -107,10 +108,10 @@
                 if (data.id) {
                     const eventosContainer = document.getElementById('eventos-container');
                     const eventoDiv = document.createElement('div');
-                    eventoDiv.classList.add('bg-white', 'p-8', 'rounded-lg', 'shadow-lg', 'hover:shadow-xl', 'transition-shadow', 'duration-300');
+                    eventoDiv.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-lg', 'hover:shadow-xl', 'transition-shadow', 'duration-300');
                     eventoDiv.id = `evento-${data.id}`;
                     eventoDiv.innerHTML = `
-                        <h2 class="text-2xl font-bold mb-4 text-blue-700">${data.titulo}</h2>
+                        <h2 class="text-xl font-bold mb-2 text-blue-600">${data.titulo}</h2>
                         <p class="text-gray-700 mb-4">${data.tipo}</p>
                         <p class="text-gray-700 mb-4">${data.fecha} - ${data.hora}</p>
                         <p class="text-gray-700 mb-4">Cupo máximo: ${data.cupo_maximo}</p>
@@ -118,7 +119,7 @@
                         <form action="/eventos/${data.id}" method="POST" onsubmit="event.preventDefault(); deleteEvento(${data.id});">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="mt-6 bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700">Eliminar</button>
+                            <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
                         </form>
                     `;
                     eventosContainer.appendChild(eventoDiv);
@@ -147,26 +148,19 @@
             .catch(error => console.error('Error al eliminar el evento:', error));
         }
 
-        function inscribirseEvento(id) {
-            const form = document.querySelector(`#evento-${id} form`);
-            const formData = new FormData(form);
+        function updatePrice(eventoId) {
+            const tipoInscripcionSelect = document.getElementById(`tipo_inscripcion-${eventoId}`);
+            const selectedOption = tipoInscripcionSelect.options[tipoInscripcionSelect.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            document.getElementById(`price-${eventoId}`).value = price;
+        }
 
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data === 'Inscripción realizada con éxito') {
-                    alert('Inscripción realizada con éxito');
-                } else {
-                    console.error('Error al inscribirse:', data);
-                }
-            })
-            .catch(error => console.error('Error al inscribirse:', error));
+        function submitPaymentForm(eventoId) {
+            const form = document.getElementById(`payment-form-${eventoId}`);
+            const tipoInscripcion = document.getElementById(`tipo_inscripcion-${eventoId}`).value;
+            const price = document.getElementById(`price-${eventoId}`).value;
+            form.action = `{{ url('/make-payment') }}/${eventoId}/${tipoInscripcion}?price=${price}`;
+            form.submit();
         }
     </script>
 </body>

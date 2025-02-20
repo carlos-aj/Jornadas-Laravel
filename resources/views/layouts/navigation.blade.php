@@ -5,6 +5,7 @@
             <a href="{{ route('eventos') }}" class="text-white hover:text-gray-200 text-lg">Eventos</a>
             <a href="{{ route('ponentes') }}" class="text-white hover:text-gray-200 text-lg">Ponentes</a>
             @if(Auth::check())
+                <a href="{{ route('inscripciones') }}" class="text-white hover:text-gray-200 text-lg">Mis Inscripciones</a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit" class="text-white hover:text-gray-200 text-lg">Cerrar sesión</button>

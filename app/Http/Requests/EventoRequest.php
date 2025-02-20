@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 use App\Models\Eventos;
+use Carbon\Carbon;
 
 class EventoRequest extends FormRequest
 {
@@ -57,13 +58,19 @@ class EventoRequest extends FormRequest
             $fecha = $this->input('fecha');
             $hora = $this->input('hora');
 
+            $eventoHora = Carbon::createFromFormat('Y-m-d H:i', "$fecha $hora");
+
             $eventoExistente = Eventos::where('tipo', $tipo)
                 ->where('fecha', $fecha)
-                ->where('hora', $hora)
+                ->get()
+                ->filter(function ($evento) use ($eventoHora) {
+                    $eventoInicio = Carbon::createFromFormat('Y-m-d H:i', "$evento->fecha $evento->hora");
+                    return $eventoHora->diffInMinutes($eventoInicio) < 55;
+                })
                 ->first();
 
             if ($eventoExistente) {
-                $validator->errors()->add('tipo', 'Ya existe un evento de este tipo en la misma fecha y hora.');
+                $validator->errors()->add('hora', 'Debe haber al menos 55 minutos entre eventos del mismo tipo.');
             }
         });
     }

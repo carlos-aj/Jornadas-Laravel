@@ -11,15 +11,15 @@ class InscripcionRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
-    {
-        return [
-            'usuario_id' => 'required|exists:usuarios,id',
-            'evento_id' => 'required|exists:eventos,id',
-            'tipo_inscripcion' => 'required|string|in:presencial,virtual',
-            'es_estudiante' => 'required|boolean',
-        ];
-    }
+    public function rules()
+{
+    return [
+        'usuario_id' => 'required|exists:users,id',
+        'evento_id' => 'required|exists:eventos,id',
+        'tipo_inscripcion' => 'required|string|in:Presencial,Virtual', // Asegurar que es obligatorio y tiene valores válidos
+        'es_estudiante' => 'required|boolean',
+    ];
+}
 
     public function messages(): array
     {

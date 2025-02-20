@@ -2,17 +2,18 @@
 
 namespace App\Notifications;
 
-use App\Models\Inscripcion;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Inscripcion;
+use App\Models\Eventos;
 
 class InscripcionNotification extends Notification
 {
     use Queueable;
 
     protected $inscripcion;
+    protected $evento;
 
     /**
      * Create a new notification instance.
@@ -20,12 +21,13 @@ class InscripcionNotification extends Notification
     public function __construct(Inscripcion $inscripcion)
     {
         $this->inscripcion = $inscripcion;
+        $this->evento = Eventos::find($inscripcion->evento_id);
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -36,34 +38,38 @@ class InscripcionNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        $costo = $this->inscripcion->tipo === 'Presencial' ? '10 euros' : '5 euros';
-
         return (new MailMessage)
-                    ->line('Te has inscrito exitosamente al evento.')
-                    ->line('Evento: ' . $this->inscripcion->evento->titulo)
-                    ->line('Tipo: ' . $this->inscripcion->tipo)
-                    ->line('Costo: ' . $costo)
-                    ->line('Fecha: ' . $this->inscripcion->evento->fecha)
-                    ->line('Hora: ' . $this->inscripcion->evento->hora)
-                    ->line('Gracias por inscribirte!');
+            ->subject('Confirmación de Inscripción')
+            ->greeting('Hola ' . $notifiable->name . ',')
+            ->line('Te has inscrito exitosamente en el evento: ' . $this->evento->titulo)
+            ->line('Tipo de inscripción: ' . $this->inscripcion->tipo_inscripcion)
+            ->line('Fecha: ' . $this->evento->fecha)
+            ->line('Hora: ' . $this->evento->hora)
+            ->line('Ponente: ' . ($this->evento->ponente ? $this->evento->ponente->nombre : 'No asignado'))
+            ->line('Gracias por inscribirte en nuestro evento.')
+            ->action('Ver Evento', url('/eventos/' . $this->evento->id))
+            ->line('¡Nos vemos pronto!');
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            'evento_id' => $this->inscripcion->evento_id,
-            'tipo' => $this->inscripcion->tipo,
+            'evento_id' => $this->evento->id,
+            'titulo' => $this->evento->titulo,
+            'tipo_inscripcion' => $this->inscripcion->tipo_inscripcion,
+            'fecha' => $this->evento->fecha,
+            'hora' => $this->evento->hora,
         ];
     }
 }

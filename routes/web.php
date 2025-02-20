@@ -1,9 +1,15 @@
 <?php
 
+
 use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\PonenteController;
+use App\Http\Controllers\PayPalController;
+
+require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     $eventos = \App\Models\Eventos::all();
@@ -24,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/ponentes', [PonenteController::class, 'crearPonente'])->name('ponentes.store');
     Route::delete('/ponentes/{id}', [PonenteController::class, 'eliminarPonente'])->name('ponentes.destroy');
+
+    Route::get('/inscripciones', [EventoController::class, 'verInscripciones'])->name('inscripciones');
+    Route::delete('/inscripciones/{id}', [EventoController::class, 'eliminarInscripcion'])->name('inscripciones.destroy');
 });
 
 // Ruta para inscribirse en un evento
@@ -35,5 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/edit', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-// Rutas de autenticación
-require __DIR__.'/auth.php';
+// Rutas de PayPal
+Route::post('/make-payment/{id}/{tipo_inscripcion}', [PayPalController::class, 'handlePayment'])->name('make.payment');
+Route::get('/cancel-payment', [PayPalController::class, 'paymentCancel'])->name('cancel.payment');
+Route::get('/success-payment/{id}/{tipo_inscripcion}', [PayPalController::class, 'paymentSuccess'])->name('success.payment');
+
