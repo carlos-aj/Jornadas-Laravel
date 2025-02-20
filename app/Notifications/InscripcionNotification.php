@@ -52,7 +52,6 @@ class InscripcionNotification extends Notification
             ->line('Hora: ' . $this->evento->hora)
             ->line('Ponente: ' . ($this->evento->ponente ? $this->evento->ponente->nombre : 'No asignado'))
             ->line('Gracias por inscribirte en nuestro evento.')
-            ->action('Ver Evento', url('/eventos/' . $this->evento->id))
             ->line('¡Nos vemos pronto!');
     }
 

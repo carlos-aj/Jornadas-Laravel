@@ -96,7 +96,7 @@ class PayPalController extends Controller
             // Enviar notificación por correo
             Auth::user()->notify(new InscripcionNotification($inscripcion));
 
-            return response()->json('Inscripción realizada con éxito', 201);
+            return redirect()->route('inscripciones')->with('success', 'Inscripción realizada con éxito');
         } else {
             return response()->json('Error al capturar el pago de PayPal', 500);
         }

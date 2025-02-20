@@ -117,15 +117,8 @@ class EventoController extends Controller
                 return response()->json('Tipo de inscripción es requerido', 400);
             }
 
-            // Check if the user is a student
-            $user = Auth::user();
-            $price = $request->input('price');
-            if (str_ends_with($user->email, '@ayala.com')) {
-                $price = 0;
-            }
-
             // Redirigir a PayPal para el pago
-            return redirect()->route('make.payment', ['id' => $id, 'tipo_inscripcion' => $tipoInscripcion, 'price' => $price]);
+            return redirect()->route('make.payment', ['id' => $id, 'tipo_inscripcion' => $tipoInscripcion]);
         } else {
             return response()->json(['error' => 'Debes estar autenticado para inscribirte'], 403);
         }
