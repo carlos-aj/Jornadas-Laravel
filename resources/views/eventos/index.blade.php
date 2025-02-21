@@ -73,7 +73,7 @@
                             @method('DELETE')
                             <button type="submit" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
                         </form>
-                    @else
+                    @elseif(Auth::check())
                         <form action="{{ route('make.payment', ['id' => $evento->id, 'tipo_inscripcion' => 'Presencial', 'price' => '10.00']) }}" method="POST" id="payment-form-{{ $evento->id }}" onsubmit="event.preventDefault(); submitPaymentForm({{ $evento->id }});">
                             @csrf
                             <div class="mb-4">

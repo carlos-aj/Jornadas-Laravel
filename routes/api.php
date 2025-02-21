@@ -7,23 +7,30 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\AuthController;
 
-// API DE PONENTES
-Route::get('/ponentes', [PonenteController::class, 'mostrarPonentes']);
-Route::post('/ponentes', [PonenteController::class, 'crearPonente']);
-Route::delete('/ponentes/{id}', [PonenteController::class, 'eliminarPonente']);
+Route::middleware('auth:sanctum')->group(function () {
+    // API DE PONENTES
+    Route::get('/ponentes', [PonenteController::class, 'mostrarPonentes']);
+    Route::post('/ponentes', [PonenteController::class, 'crearPonente']);
+    Route::delete('/ponentes/{id}', [PonenteController::class, 'eliminarPonente']);
 
-// API DE EVENTOS
-Route::get('/eventos', [EventoController::class, 'mostrarEventos']);
-Route::post('/eventos', [EventoController::class, 'crearEvento']);
-Route::delete('/eventos/{id}', [EventoController::class, 'eliminarEvento']);
+    // API DE EVENTOS
+    Route::get('/eventos', [EventoController::class, 'mostrarEventos']);
+    Route::post('/eventos', [EventoController::class, 'crearEvento']);
+    Route::delete('/eventos/{id}', [EventoController::class, 'eliminarEvento']);
 
-// API DE USUARIOS
-Route::get('/usuarios', [UsuarioController::class, 'mostrarUsuarios']);
+    // API DE USUARIOS
+    Route::get('/usuarios', [UsuarioController::class, 'mostrarUsuarios']);
 
-// API DE PAGOS
-Route::get('/pagos', [PagoController::class, 'mostrarPagos']);
+    // API DE PAGOS
+    Route::get('/pagos', [PagoController::class, 'mostrarPagos']);
 
-// API DE INSCRIPCIONES
-Route::post('/inscripciones', [InscripcionController::class, 'crearInscripcion']);
-Route::delete('/inscripciones/{id}', [InscripcionController::class, 'eliminarInscripcion']);
+    // API DE INSCRIPCIONES
+    Route::post('/inscripciones', [InscripcionController::class, 'crearInscripcion']);
+    Route::delete('/inscripciones/{id}', [InscripcionController::class, 'eliminarInscripcion']);
+});
+
+// Authentication routes
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);

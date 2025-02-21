@@ -25,7 +25,6 @@ class PayPalController extends Controller
         }
 
         if ($price == 0) {
-            // Save the inscription with tipo_inscripcion
             $inscripcion = new Inscripcion();
             $inscripcion->user_id = Auth::id();
             $inscripcion->evento_id = $id;
