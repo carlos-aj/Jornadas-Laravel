@@ -162,6 +162,12 @@
             form.action = `{{ url('/make-payment') }}/${eventoId}/${tipoInscripcion}?price=${price}`;
             form.submit();
         }
+
+        function refreshCupo(eventoId, newCupo) {
+            const eventoDiv = document.getElementById(`evento-${eventoId}`);
+            const cupoElement = eventoDiv.querySelector('.cupo-maximo');
+            cupoElement.textContent = `Cupo máximo: ${newCupo}`;
+        }
     </script>
 </body>
 </html>

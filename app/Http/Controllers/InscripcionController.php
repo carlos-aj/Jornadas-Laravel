@@ -5,29 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Inscripcion;
 use App\Http\Requests\InscripcionRequest;
 use Illuminate\Http\Request;
+use App\Models\Evento;
 
 class InscripcionController extends Controller
 {
     public function crearInscripcion(InscripcionRequest $request)
-{
-    $validated = $request->validated();
+    {
+        $validated = $request->validated();
 
-    // Depuración: Verifica si tipo_inscripcion está en $validated
-    dd($validated);
+        // Check if the user is already registered for the event
+        $existingInscripcion = Inscripcion::where('usuario_id', $validated['usuario_id'])
+                                          ->where('evento_id', $validated['evento_id'])
+                                          ->first();
 
-    $precio = $this->calcularPrecio($validated['tipo_inscripcion'], $validated['es_estudiante']);
+        if ($existingInscripcion) {
+            return response()->json(['error' => 'Ya estás inscrito en este evento.'], 400);
+        }
 
-    $inscripcion = new Inscripcion();
-    $inscripcion->usuario_id = $validated['usuario_id'];
-    $inscripcion->evento_id = $validated['evento_id'];
-    $inscripcion->tipo_inscripcion = $validated['tipo_inscripcion'];
-    $inscripcion->es_estudiante = $validated['es_estudiante'];
-    $inscripcion->precio = $precio;
+        // Find the event and check capacity
+        $evento = Evento::find($validated['evento_id']);
+        if ($evento->cupo_maximo <= 0) {
+            return response()->json(['error' => 'No hay cupo disponible para este evento.'], 400);
+        }
 
-    $inscripcion->save();
+        $precio = $this->calcularPrecio($validated['tipo_inscripcion'], $validated['es_estudiante']);
 
-    return response()->json($inscripcion, 201);
-}
+        $inscripcion = new Inscripcion();
+        $inscripcion->usuario_id = $validated['usuario_id'];
+        $inscripcion->evento_id = $validated['evento_id'];
+        $inscripcion->tipo_inscripcion = $validated['tipo_inscripcion'];
+        $inscripcion->es_estudiante = $validated['es_estudiante'];
+        $inscripcion->precio = $precio;
+
+        $inscripcion->save();
+
+        $evento->cupo_maximo -= 1;
+        $evento->save();
+
+        return response()->json(['inscripcion' => $inscripcion, 'cupo_maximo' => $evento->cupo_maximo], 201);
+    }
 
     private function calcularPrecio($tipoInscripcion, $esEstudiante)
     {

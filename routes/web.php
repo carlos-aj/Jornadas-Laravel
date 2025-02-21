@@ -21,8 +21,11 @@ Route::get('/dashboard', function () {
     return redirect('/');
 })->middleware(['auth'])->name('dashboard');
 
-Route::get('/eventos', [EventoController::class, 'index'])->name('eventos');
-Route::get('/ponentes', [PonenteController::class, 'index'])->name('ponentes');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/eventos', [EventoController::class, 'index'])->name('eventos');
+    Route::get('/ponentes', [PonenteController::class, 'index'])->name('ponentes');
+    Route::post('/eventos/{id}/inscribirse', [EventoController::class, 'inscribirse'])->name('eventos.inscribirse');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/eventos', [EventoController::class, 'crearEvento'])->name('eventos.store');
@@ -33,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/inscripciones', [EventoController::class, 'verInscripciones'])->name('inscripciones');
     Route::delete('/inscripciones/{id}', [EventoController::class, 'eliminarInscripcion'])->name('inscripciones.destroy');
+
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/edit', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Ruta para inscribirse en un evento
@@ -48,4 +54,8 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/make-payment/{id}/{tipo_inscripcion}', [PayPalController::class, 'handlePayment'])->name('make.payment');
 Route::get('/cancel-payment', [PayPalController::class, 'paymentCancel'])->name('cancel.payment');
 Route::get('/success-payment/{id}/{tipo_inscripcion}', [PayPalController::class, 'paymentSuccess'])->name('success.payment');
+
+// Authentication routes
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
